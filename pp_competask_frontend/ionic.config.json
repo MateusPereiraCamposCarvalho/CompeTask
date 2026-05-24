@@ -1,0 +1,7 @@
+{
+  "name": "PP_MateusPereiraVitorMota",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}

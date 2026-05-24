@@ -1,0 +1,57 @@
+<ion-content [fullscreen]="true" class="auth-screen cadastro-screen">
+  <div class="screen-glow screen-glow--left"></div>
+  <div class="screen-glow screen-glow--right"></div>
+
+  <section class="auth-card">
+    <div class="brand-block">
+      <img src="assets/icon/competask.png" alt="Competask" class="brand-mark" />
+      <span class="brand-name"><span>COMPE</span><span>TASK</span></span>
+    </div>
+
+    <div class="hero-copy">
+      <h1>Crie sua conta <span aria-hidden="true">🚀</span></h1>
+      <p>Preencha os dados para começar</p>
+    </div>
+
+    <label class="profile-upload" for="fotoPerfilInput">
+      <span class="profile-upload__circle">
+        <ng-container *ngIf="!fotoPreview; else previewFoto">
+          <ion-icon name="camera-outline"></ion-icon>
+        </ng-container>
+
+        <ng-template #previewFoto>
+          <img [src]="fotoPreview" alt="Pré-visualização da foto de perfil" class="profile-preview" />
+        </ng-template>
+      </span>
+      <span class="profile-upload__caption">Foto de perfil</span>
+    </label>
+    <input id="fotoPerfilInput" type="file" accept="image/*" hidden (change)="selecionarFoto($event)" />
+
+    <form class="auth-form" [formGroup]="cadastroForm" (ngSubmit)="cadastrar()">
+      <label class="input-shell" [class.input-shell--invalid]="cadastroForm.controls['nome'].touched && cadastroForm.controls['nome'].invalid">
+        <ion-icon name="person-outline"></ion-icon>
+        <input type="text" formControlName="nome" placeholder="Nome" autocomplete="name" />
+      </label>
+
+      <label class="input-shell" [class.input-shell--invalid]="cadastroForm.controls['email'].touched && cadastroForm.controls['email'].invalid">
+        <ion-icon name="mail-outline"></ion-icon>
+        <input type="email" formControlName="email" placeholder="E-mail" autocomplete="email" />
+      </label>
+
+      <label class="input-shell" [class.input-shell--invalid]="cadastroForm.controls['senha'].touched && cadastroForm.controls['senha'].invalid">
+        <ion-icon name="lock-closed-outline"></ion-icon>
+        <input [type]="senhaVisivel ? 'text' : 'password'" formControlName="senha" placeholder="Senha" autocomplete="new-password" />
+        <button type="button" class="input-action" (click)="alternarSenhaVisibilidade()" aria-label="Alternar visibilidade da senha">
+          <ion-icon [name]="senhaVisivel ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+        </button>
+      </label>
+
+      <ion-button class="primary-button" type="submit" expand="block">ENTRAR</ion-button>
+    </form>
+
+    <p class="switch-line">
+      Já tem conta?
+      <button type="button" class="link-button" (click)="irParaLogin()">Entrar</button>
+    </p>
+  </section>
+</ion-content>

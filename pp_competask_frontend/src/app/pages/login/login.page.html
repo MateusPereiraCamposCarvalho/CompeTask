@@ -1,0 +1,38 @@
+<ion-content [fullscreen]="true" class="auth-screen login-screen">
+  <div class="screen-glow screen-glow--left"></div>
+  <div class="screen-glow screen-glow--right"></div>
+
+  <section class="auth-card">
+    <div class="brand-block">
+      <img src="assets/icon/competask.png" alt="Competask" class="brand-mark" />
+      <span class="brand-name"><span>COMPE</span><span>TASK</span></span>
+    </div>
+
+    <div class="hero-copy">
+      <h1>Bem-vindo <span aria-hidden="true">😄</span></h1>
+      <p>Entre para gerenciar suas tarefas</p>
+    </div>
+
+    <form class="auth-form" [formGroup]="loginForm" (ngSubmit)="entrar()">
+      <label class="input-shell" [class.input-shell--invalid]="loginForm.controls['email'].touched && loginForm.controls['email'].invalid">
+        <ion-icon name="mail-outline"></ion-icon>
+        <input type="email" formControlName="email" placeholder="E-mail" autocomplete="email" />
+      </label>
+
+      <label class="input-shell" [class.input-shell--invalid]="loginForm.controls['senha'].touched && loginForm.controls['senha'].invalid">
+        <ion-icon name="lock-closed-outline"></ion-icon>
+        <input [type]="senhaVisivel ? 'text' : 'password'" formControlName="senha" placeholder="Senha" autocomplete="current-password" />
+        <button type="button" class="input-action" (click)="alternarSenhaVisibilidade()" aria-label="Alternar visibilidade da senha">
+          <ion-icon [name]="senhaVisivel ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+        </button>
+      </label>
+
+      <ion-button class="primary-button" type="submit" expand="block">ENTRAR</ion-button>
+    </form>
+
+    <p class="switch-line">
+      Não tem conta?
+      <button type="button" class="link-button" (click)="irParaCadastro()">Cadastre-se</button>
+    </p>
+  </section>
+</ion-content>

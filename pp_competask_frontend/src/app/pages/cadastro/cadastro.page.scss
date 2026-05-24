@@ -1,0 +1,243 @@
+:host {
+  display: block;
+}
+
+.auth-screen {
+  --background: radial-gradient(circle at 50% 18%, #5e009f 0%, #4f008d 42%, #430078 100%);
+  --padding-top: 58px;
+  --padding-bottom: 58px;
+  color: #1f2450;
+}
+
+.auth-screen::part(scroll) {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  min-height: 100%;
+}
+
+.screen-glow {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(76px);
+  opacity: 0.24;
+  pointer-events: none;
+}
+
+.screen-glow--left {
+  inset: 16% auto auto -8%;
+  width: 190px;
+  height: 190px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.screen-glow--right {
+  inset: auto -12% 18% auto;
+  width: 176px;
+  height: 176px;
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.auth-card {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 320px);
+  margin: 66px auto 24px;
+  padding: 28px 16px 22px;
+  border-radius: 26px;
+  background: linear-gradient(180deg, #ffffff 0%, #fbf9ff 100%);
+  box-shadow: 0 18px 40px rgba(18, 0, 38, 0.34), 0 4px 10px rgba(94, 0, 159, 0.12);
+}
+
+.brand-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.brand-mark {
+  width: 60px;
+  height: 60px;
+  display: block;
+}
+
+.brand-name {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  font-size: 1.02rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+}
+
+.brand-name span:first-child {
+  color: #252d64;
+}
+
+.brand-name span:last-child {
+  color: #25cfc4;
+}
+
+.hero-copy {
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+.hero-copy h1 {
+  margin: 0 0 10px;
+  font-size: 1.6rem;
+  line-height: 1.1;
+  letter-spacing: -0.05em;
+  color: #202651;
+  font-weight: 800;
+}
+
+.hero-copy p {
+  margin: 0;
+  color: #aca8cb;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.profile-upload {
+  width: fit-content;
+  margin: 0 auto 8px;
+  display: grid;
+  place-items: center;
+  gap: 7px;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 0.7rem;
+  cursor: pointer;
+}
+
+.profile-upload__circle {
+  width: 76px;
+  height: 76px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 50%;
+  background: linear-gradient(180deg, #56009a 0%, #4b008c 100%);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  box-shadow: 0 10px 18px rgba(86, 0, 154, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+}
+
+.profile-upload__caption {
+  color: #b7b2d0;
+  font-size: 0.72rem;
+}
+
+.profile-upload ion-icon {
+  font-size: 1.15rem;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.profile-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.auth-form {
+  display: grid;
+  gap: 11px;
+}
+
+.input-shell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 0 12px;
+  border-radius: 14px;
+  background: #f4f1fb;
+  color: #a39fbc;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.input-shell:focus-within {
+  box-shadow: 0 0 0 2px rgba(37, 207, 196, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.75);
+}
+
+.input-shell--invalid {
+  box-shadow: 0 0 0 1px rgba(255, 80, 115, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.input-shell ion-icon {
+  flex: 0 0 auto;
+  font-size: 0.96rem;
+  color: #c4bfd5;
+}
+
+.input-shell input {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: #252845;
+  font: inherit;
+  font-size: 0.94rem;
+}
+
+.input-shell input::placeholder {
+  color: #bcb8cc;
+}
+
+.input-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: #8e8aa3;
+}
+
+.input-action ion-icon {
+  font-size: 1rem;
+}
+
+.primary-button {
+  margin-top: 5px;
+  --background: linear-gradient(180deg, #6d00c3 0%, #5600a5 100%);
+  --background-activated: linear-gradient(180deg, #6300b4 0%, #4b008f 100%);
+  --box-shadow: 0 10px 18px rgba(88, 0, 156, 0.34);
+  --border-radius: 14px;
+  color: white;
+  height: 48px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+}
+
+.switch-line {
+  margin: 16px 0 0;
+  text-align: center;
+  color: #a5a1b8;
+  font-size: 0.88rem;
+}
+
+.link-button {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: #1fcfc4;
+  font: inherit;
+  font-weight: 700;
+}
+
+@media (min-width: 700px) {
+  .auth-screen {
+    --padding-top: 64px;
+    --padding-bottom: 64px;
+  }
+
+  .auth-card {
+    margin-top: 72px;
+  }
+}
