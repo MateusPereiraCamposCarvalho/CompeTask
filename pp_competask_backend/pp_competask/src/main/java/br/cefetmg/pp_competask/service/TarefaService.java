@@ -29,9 +29,19 @@ public class TarefaService {
         return tarefas.stream().map(TarefaResponseDTO::new).toList();
     }
 
+    @Transactional(readOnly = true)
+    public TarefaResponseDTO buscarPorId(Long id){
+        Tarefa tarefa = tarefaRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Tarefa nao encontrada."));
+
+        return new TarefaResponseDTO(tarefa);
+    }
+
     @Transactional
     public TarefaResponseDTO inserir(TarefaRequestDTO dto){
-        Usuario usuario = usuarioRepository.findById(dto.getUsuarioId()).orElse(null);
+        Usuario usuario = usuarioRepository.findById(dto.getUsuarioId())
+            .orElseThrow(() -> new IllegalArgumentException("Usuario nao encontrado. Faca login novamente."));
+
         Tarefa tarefa = new Tarefa();
         tarefa.setUsuario(usuario);
         tarefa.setTitulo(dto.getTitulo());
@@ -50,7 +60,9 @@ public class TarefaService {
     @Transactional
     public TarefaResponseDTO atualizar(Long id, TarefaRequestDTO dto){
         //ver se existe tarefa com esse id
-        Tarefa tarefa = tarefaRepository.findById(id).orElse(null);
+        Tarefa tarefa = tarefaRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Tarefa nao encontrada."));
+
         tarefa.setTitulo(dto.getTitulo());
         tarefa.setDescricao(dto.getDescricao());
         tarefa.setPrioridade(dto.getPrioridade());
@@ -75,6 +87,10 @@ public class TarefaService {
     @Transactional
     public void excluir(Long id){
         //verificar se existe pra ai mandar excluir
+        if (!tarefaRepository.existsById(id)) {
+            throw new IllegalArgumentException("Tarefa nao encontrada.");
+        }
+
         tarefaRepository.deleteById(id);
     }
 }

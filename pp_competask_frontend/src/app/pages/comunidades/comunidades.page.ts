@@ -8,21 +8,18 @@ import {
   addOutline,
   chevronForwardOutline,
   closeOutline,
-  codeSlashOutline,
-  colorPaletteOutline,
-  gameControllerOutline,
   globeOutline,
   keyOutline,
   peopleOutline,
   personOutline,
-  rocketOutline,
   searchOutline,
   timerOutline,
   checkmarkCircleOutline,
-  constructOutline,
 } from 'ionicons/icons';
 
 import { ComunidadeModel } from '../../models/comunidade.model';
+import { ComunidadesService } from '../../services/comunidades.service';
+import { UsuarioService } from '../../services/usuario.service';
 
 type AtalhoRodape = {
   label: string;
@@ -47,90 +44,40 @@ export class ComunidadesPage {
   codigoPrivado = '';
   senhaPrivada = '';
   mensagemAcao = '';
-
-  readonly comunidades: Array<ComunidadeModel & { membros: number; destaque?: boolean; icone: string; cor: string }> = [
-    {
-      idComunidade: 1,
-      nome: 'Desenvolvedores React',
-      descricao: 'Troca de dicas, componentes e hooks.',
-      acesso: 'publico',
-      foto: '',
-      membros: 128,
-      destaque: true,
-      icone: 'code-slash-outline',
-      cor: 'var(--accent-rose)',
-    },
-    {
-      idComunidade: 2,
-      nome: 'Design UI/UX',
-      descricao: 'Referências visuais, fluxo e experiência.',
-      acesso: 'publico',
-      foto: '',
-      membros: 85,
-      icone: 'color-palette-outline',
-      cor: 'var(--accent-cyan)',
-    },
-    {
-      idComunidade: 3,
-      nome: 'Projeto Final TCC',
-      descricao: 'Organização do grupo e alinhamento final.',
-      acesso: 'privado',
-      foto: '',
-      membros: 12,
-      destaque: true,
-      icone: 'construct-outline',
-      cor: 'var(--accent-violet)',
-    },
-    {
-      idComunidade: 4,
-      nome: 'Startups & Negócios',
-      descricao: 'Ideias, validação e planejamento.',
-      acesso: 'publico',
-      foto: '',
-      membros: 340,
-      icone: 'rocket-outline',
-      cor: 'var(--accent-gold)',
-    },
-    {
-      idComunidade: 5,
-      nome: 'GameDev Brasil',
-      descricao: 'Arte, motor gráfico e publicação.',
-      acesso: 'privado',
-      foto: '',
-      membros: 216,
-      icone: 'game-controller-outline',
-      cor: 'var(--accent-green)',
-    },
-  ];
+  carregando = false;
+  comunidades: ComunidadeModel[] = [];
 
   atalhosRodape: AtalhoRodape[] = [
     { label: 'Tarefas', icon: 'checkmark-circle-outline', rota: '/tarefas' },
     { label: 'Comunidades', icon: 'people-outline', ativo: true },
     { label: 'Timer', icon: 'timer-outline' },
-    { label: 'Usuário', icon: 'person-outline', rota: '/usuario' },
+    { label: 'Usuario', icon: 'person-outline', rota: '/usuario' },
   ];
 
-  constructor(private readonly router: Router) {
+  constructor(
+    private readonly router: Router,
+    private readonly comunidadesService: ComunidadesService,
+    private readonly usuarioService: UsuarioService
+  ) {
     addIcons({
       addOutline,
       chevronForwardOutline,
       closeOutline,
-      codeSlashOutline,
-      colorPaletteOutline,
-      gameControllerOutline,
       globeOutline,
       keyOutline,
       peopleOutline,
       personOutline,
-      rocketOutline,
       searchOutline,
       timerOutline,
       checkmarkCircleOutline,
-      constructOutline,
     });
   }
 
-  get comunidadesFiltradas(): Array<ComunidadeModel & { membros: number; destaque?: boolean; icone: string; cor: string }> {
+  ionViewWillEnter(): void {
+    this.carregarComunidades();
+  }
+
+  get comunidadesFiltradas(): ComunidadeModel[] {
     const termo = this.busca.trim().toLowerCase();
 
     if (!termo) {
@@ -144,6 +91,56 @@ export class ComunidadesPage {
         (comunidade.acesso === 'publico' ? 'publica' : 'privada').includes(termo)
       );
     });
+  }
+
+  carregarComunidades(): void {
+    const usuarioAtual = this.usuarioService.obterUsuarioSessao();
+
+    if (!usuarioAtual?.id) {
+      this.comunidades = [];
+      this.mensagemAcao = 'Voce precisa estar logado para ver suas comunidades.';
+      return;
+    }
+
+    this.carregando = true;
+    this.mensagemAcao = '';
+    this.comunidadesService.listarPorUsuario(usuarioAtual.id).subscribe({
+      next: (comunidades) => {
+        this.comunidades = comunidades;
+        this.carregando = false;
+      },
+      error: () => {
+        this.mensagemAcao = 'Nao foi possivel carregar as comunidades.';
+        this.carregando = false;
+      },
+    });
+  }
+
+  carregarComunidadesPublicas(): void {
+    this.carregando = true;
+    this.comunidadesService.listarPublicas().subscribe({
+      next: (comunidades) => {
+        this.comunidades = comunidades;
+        this.mensagemAcao = 'Mostrando comunidades publicas.';
+        this.carregando = false;
+      },
+      error: () => {
+        this.mensagemAcao = 'Nao foi possivel carregar as comunidades publicas.';
+        this.carregando = false;
+      },
+    });
+  }
+
+  contarMembros(comunidade: ComunidadeModel): number {
+    return comunidade.membros.length;
+  }
+
+  escolherIcone(comunidade: ComunidadeModel): string {
+    return 'people-outline';
+  }
+
+  escolherCor(comunidade: ComunidadeModel): string {
+    return comunidade.acesso === 'publico' ? 'var(--accent-cyan)' : 'var(--accent-violet)';
   }
 
   abrirModal(): void {
@@ -169,7 +166,7 @@ export class ComunidadesPage {
 
   entrarComunidadePrivada(): void {
     this.modalPrivadoAberto = false;
-    this.router.navigate(['/comunidades', 3]);
+    this.mensagemAcao = 'Entrada em comunidade privada ainda nao esta no backend.';
   }
 
   selecionarAcao(acao: AcaoModalComunidade): void {
@@ -179,8 +176,8 @@ export class ComunidadesPage {
     }
 
     if (acao === 'publicas') {
-      this.mensagemAcao = 'Busca de comunidades públicas será conectada depois.';
       this.modalAberto = false;
+      this.mensagemAcao = 'Busca de comunidades publicas ainda nao esta disponivel.';
       return;
     }
 
@@ -201,6 +198,6 @@ export class ComunidadesPage {
       return;
     }
 
-    this.mensagemAcao = `${atalho.label} ainda será ligado ao backend.`;
+    this.mensagemAcao = `${atalho.label} ainda sera ligado ao backend.`;
   }
 }

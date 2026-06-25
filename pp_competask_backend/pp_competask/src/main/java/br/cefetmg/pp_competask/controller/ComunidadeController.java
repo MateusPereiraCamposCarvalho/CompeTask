@@ -41,6 +41,12 @@ public class ComunidadeController {
         return comunidadeService.getAllPublicas();
     }
 
+    //listar comunidades do usuario logado
+    @GetMapping("/usuario/{idUsuario}")
+    public List<ComunidadeResponseDTO> getAllByUsuario(@PathVariable Long idUsuario){
+        return comunidadeService.getAllByUsuario(idUsuario);
+    }
+
     //inserir comunidade
     @PostMapping("")
     public ResponseEntity<ComunidadeResponseDTO> inserir(@Valid @RequestBody ComunidadeRequestDTO comunidadeRequestDTO){

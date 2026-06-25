@@ -9,7 +9,7 @@
       </button>
 
       <div>
-        <h1>Nova Comunidade</h1>
+        <h1>{{ tituloPagina }}</h1>
       </div>
     </header>
 
@@ -50,10 +50,23 @@
         </select>
       </label>
 
-      <p class="hint-text">Por enquanto, tudo fica apenas na interface e no estado local.</p>
+      <p class="hint-text">Ao criar, voce entra como administrador da comunidade.</p>
       <p class="action-message" *ngIf="mensagemAcao">{{ mensagemAcao }}</p>
 
-      <ion-button class="primary-button" type="submit" expand="block">CRIAR COMUNIDADE</ion-button>
+      <ion-button class="primary-button" type="submit" expand="block" [disabled]="salvando">
+        {{ textoBotao }}
+      </ion-button>
+
+      <ion-button
+        *ngIf="comunidadeId"
+        class="danger-button"
+        type="button"
+        expand="block"
+        fill="outline"
+        [disabled]="salvando"
+        (click)="excluirComunidade()">
+        EXCLUIR COMUNIDADE
+      </ion-button>
     </form>
   </section>
 </ion-content>

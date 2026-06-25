@@ -10,36 +10,41 @@
         <p><ion-icon name="people-outline"></ion-icon> {{ comunidade.membros }} membros</p>
       </div>
 
-      <button type="button" class="settings-button" aria-label="Configurações">
-        <ion-icon name="settings-outline"></ion-icon>
+      <button type="button" class="settings-button" (click)="editarComunidade()" aria-label="Editar comunidade">
+        <img *ngIf="comunidade.foto; else communityIcon" [src]="comunidade.foto" alt="" />
+        <ng-template #communityIcon>
+          <ion-icon name="people-outline"></ion-icon>
+        </ng-template>
       </button>
     </header>
+
+    <p class="action-message" *ngIf="mensagemAcao">{{ mensagemAcao }}</p>
 
     <section class="community-tab-content" [ngSwitch]="abaAtual">
       <div *ngSwitchCase="'tarefas'" class="community-tasks">
         <div class="task-toolbar">
-          <span>4 tarefas</span>
-          <button type="button">Status</button>
-        </div>
+          <span>{{ tarefas.length }} tarefas</span>
+          <div class="status-wrap">
+            <button type="button" class="status-pill" (click)="alternarMenuStatus($event)">
+              <ion-icon name="filter-outline"></ion-icon>
+              <span>{{ textoOrdenacao }}</span>
+              <ion-icon name="caret-down-outline" class="status-pill__chevron" [class.status-pill__chevron--open]="statusMenuAberto"></ion-icon>
+            </button>
 
-        <article *ngFor="let tarefa of tarefas" class="community-task-card" [class.community-task-card--late]="tarefa.atrasada">
-          <button type="button" class="task-check" aria-label="Concluir tarefa"></button>
-          <div>
-            <h2>{{ tarefa.titulo }}</h2>
-            <p>{{ tarefa.descricao }}</p>
-            <div class="task-meta">
-              <span>Planejado: {{ tarefa.planejamento }}</span>
-              <span>Prioridade {{ tarefa.prioridade }}</span>
-              <span>{{ tarefa.pessoas }}</span>
-              <strong *ngIf="tarefa.status">{{ tarefa.status }}</strong>
+            <div class="status-menu" *ngIf="statusMenuAberto">
+              <button
+                *ngFor="let opcao of opcoesOrdenacao"
+                type="button"
+                class="status-menu__item"
+                [class.status-menu__item--active]="ordenacaoAtual === opcao.chave"
+                (click)="selecionarOrdenacao(opcao.chave)">
+                <span>{{ opcao.label }}</span>
+              </button>
             </div>
           </div>
-        </article>
+        </div>
 
-        <button type="button" class="done-group">
-          <span><ion-icon name="checkmark-circle-outline"></ion-icon> Concluídas (1)</span>
-          <ion-icon name="chevron-down-outline"></ion-icon>
-        </button>
+        <p class="empty-state">Nenhuma tarefa cadastrada nessa comunidade.</p>
 
         <button type="button" class="floating-action" aria-label="Criar tarefa da comunidade">
           <ion-icon name="add-outline"></ion-icon>
@@ -47,7 +52,9 @@
       </div>
 
       <div *ngSwitchCase="'chat'" class="community-chat">
-        <div class="chat-messages">
+        <p class="empty-state" *ngIf="mensagens.length === 0">Nenhuma mensagem por enquanto.</p>
+
+        <div class="chat-messages" *ngIf="mensagens.length > 0">
           <article *ngFor="let mensagem of mensagens" class="chat-bubble" [class.chat-bubble--mine]="mensagem.minha">
             <strong *ngIf="!mensagem.minha">{{ mensagem.autor }}</strong>
             <p>{{ mensagem.texto }}</p>
@@ -63,6 +70,8 @@
       </div>
 
       <div *ngSwitchCase="'checkins'" class="community-checkins">
+        <p class="empty-state" *ngIf="checkins.length === 0">Nenhum check-in por enquanto.</p>
+
         <article *ngFor="let checkin of checkins" class="checkin-card">
           <div class="checkin-photo">{{ checkin.icone }}</div>
           <div class="checkin-body">
@@ -91,12 +100,13 @@
           </button>
         </div>
 
-        <p class="ranking-label">CAMPEÕES DA SEMANA</p>
+        <p class="ranking-label">RANKING DA COMUNIDADE</p>
+        <p class="empty-state" *ngIf="ranking.length === 0">Ranking vazio por enquanto.</p>
 
         <article *ngFor="let pessoa of ranking" class="ranking-row">
           <span class="ranking-position" [class.ranking-position--top]="pessoa.posicao <= 3">{{ pessoa.posicao }}</span>
           <strong>{{ pessoa.nome }}</strong>
-          <span class="ranking-points"><span *ngIf="pessoa.campeao">♕</span> {{ pessoa.pontos }} pts</span>
+          <span class="ranking-points"><span *ngIf="pessoa.campeao">#</span> {{ pessoa.pontos }} pts</span>
         </article>
       </div>
     </section>
@@ -106,15 +116,15 @@
 
   <section class="checkin-modal" *ngIf="novoCheckinAberto" role="dialog" aria-modal="true" aria-label="Novo check-in">
     <h2>Novo check-in</h2>
-    <p>Prove que você concluiu a tarefa.</p>
+    <p>Prove que voce concluiu a tarefa.</p>
 
     <button type="button" class="photo-drop">
       <ion-icon name="image-outline"></ion-icon>
       <span>Adicionar foto</span>
     </button>
 
-    <input type="text" name="checkinTitulo" [(ngModel)]="checkinTitulo" placeholder="Título" />
-    <textarea name="checkinDescricao" [(ngModel)]="checkinDescricao" placeholder="Descrição"></textarea>
+    <input type="text" name="checkinTitulo" [(ngModel)]="checkinTitulo" placeholder="Titulo" />
+    <textarea name="checkinDescricao" [(ngModel)]="checkinDescricao" placeholder="Descricao"></textarea>
 
     <div class="checkin-modal__actions">
       <button type="button" class="checkin-modal__button checkin-modal__button--muted" (click)="fecharNovoCheckin()">Cancelar</button>
@@ -122,7 +132,7 @@
     </div>
   </section>
 
-  <nav class="community-tabs" aria-label="Navegação da comunidade">
+  <nav class="community-tabs" aria-label="Navegacao da comunidade">
     <button
       *ngFor="let aba of abas"
       type="button"

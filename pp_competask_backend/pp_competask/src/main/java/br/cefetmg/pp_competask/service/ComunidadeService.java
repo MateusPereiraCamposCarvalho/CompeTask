@@ -39,6 +39,15 @@ public class ComunidadeService {
         return comunidades.stream().map(ComunidadeResponseDTO::new).toList();
     }
 
+    @Transactional(readOnly = true)
+    public List<ComunidadeResponseDTO> getAllByUsuario(Long idUsuario) {
+        List<MembroComunidade> vinculos = membroComunidadeRepository.findByUsuarioIdUsuario(idUsuario);
+        return vinculos.stream()
+            .map(MembroComunidade::getComunidade)
+            .map(ComunidadeResponseDTO::new)
+            .toList();
+    }
+
     @Transactional
     public ComunidadeResponseDTO inserir(ComunidadeRequestDTO dto){
         //melhorar o retorno, ta so retornando null se nao achar, cade excessao

@@ -14,27 +14,33 @@
       <input type="text" name="busca" [(ngModel)]="busca" placeholder="Buscar comunidades..." />
     </label>
 
-    <div class="communities-stack">
+    <p class="action-message" *ngIf="carregando">Carregando comunidades...</p>
+
+    <div class="communities-stack" *ngIf="!carregando">
       <article
         *ngFor="let comunidade of comunidadesFiltradas"
         class="community-card"
         (click)="abrirComunidade(comunidade)">
-        <div class="community-avatar" [style.--avatar-color]="comunidade.cor">
-          <ion-icon [name]="comunidade.icone"></ion-icon>
+        <div class="community-avatar" [style.--avatar-color]="escolherCor(comunidade)">
+          <img *ngIf="comunidade.foto; else iconeComunidade" [src]="comunidade.foto" alt="" />
+          <ng-template #iconeComunidade>
+            <ion-icon [name]="escolherIcone(comunidade)"></ion-icon>
+          </ng-template>
         </div>
 
         <div class="community-content">
           <div class="community-headline">
-            <h2>
-              {{ comunidade.nome }}
-              <span *ngIf="comunidade.destaque" class="community-crown">👑</span>
-            </h2>
+            <h2>{{ comunidade.nome }}</h2>
           </div>
-          <p>{{ comunidade.membros }} membros</p>
+          <p>{{ contarMembros(comunidade) }} membros</p>
         </div>
 
         <ion-icon name="chevron-forward-outline" class="community-arrow"></ion-icon>
       </article>
+
+      <p class="empty-message" *ngIf="comunidadesFiltradas.length === 0 && !mensagemAcao">
+        Nenhuma comunidade encontrada.
+      </p>
     </div>
 
     <p class="action-message" *ngIf="mensagemAcao">{{ mensagemAcao }}</p>
@@ -45,7 +51,7 @@
 
     <div class="community-modal-backdrop" *ngIf="modalAberto" (click)="fecharModal()"></div>
 
-    <section class="community-modal" *ngIf="modalAberto" role="dialog" aria-modal="true" aria-label="Ações de comunidades">
+    <section class="community-modal" *ngIf="modalAberto" role="dialog" aria-modal="true" aria-label="Acoes de comunidades">
       <header class="community-modal__header">
         <h2>Comunidades</h2>
         <button type="button" class="community-modal__close" (click)="fecharModal()" aria-label="Fechar">
@@ -65,7 +71,7 @@
           <span class="community-modal__icon community-modal__icon--cyan">
             <ion-icon name="globe-outline"></ion-icon>
           </span>
-          <span>Buscar comunidades públicas</span>
+          <span>Buscar comunidades publicas</span>
         </button>
 
         <button type="button" class="community-modal__option" (click)="selecionarAcao('privadas')">
@@ -81,10 +87,10 @@
 
     <section class="private-modal" *ngIf="modalPrivadoAberto" role="dialog" aria-modal="true" aria-label="Entrar em comunidade privada">
       <h2>Entrar em comunidade privada</h2>
-      <p>Informe o código e a senha da comunidade.</p>
+      <p>Informe o codigo e a senha da comunidade.</p>
 
       <label class="private-modal__field">
-        <input type="text" name="codigoPrivado" [(ngModel)]="codigoPrivado" placeholder="Código" />
+        <input type="text" name="codigoPrivado" [(ngModel)]="codigoPrivado" placeholder="Codigo" />
       </label>
 
       <label class="private-modal__field">
@@ -98,7 +104,7 @@
     </section>
   </section>
 
-  <nav class="bottom-nav" aria-label="Navegação inferior">
+  <nav class="bottom-nav" aria-label="Navegacao inferior">
     <button
       *ngFor="let atalho of atalhosRodape"
       type="button"

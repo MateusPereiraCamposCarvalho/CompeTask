@@ -1,7 +1,6 @@
 package br.cefetmg.pp_competask.dto;
 
 import br.cefetmg.pp_competask.model.Tarefa;
-import br.cefetmg.pp_competask.model.Usuario;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,7 +11,7 @@ import lombok.Setter;
 public class TarefaResponseDTO {
 
     private Long id;
-    private Usuario usuario;
+    private Long usuarioId;
     private String titulo;
     private String descricao;
     private int prioridade;
@@ -26,7 +25,7 @@ public class TarefaResponseDTO {
 
     public TarefaResponseDTO(Tarefa tarefa){
         this.id = tarefa.getIdTarefa();
-        this.usuario = tarefa.getUsuario();
+        this.usuarioId = tarefa.getUsuario().getIdUsuario();
         this.titulo = tarefa.getTitulo();
         this.descricao = tarefa.getDescricao();
         this.prioridade = tarefa.getPrioridade();

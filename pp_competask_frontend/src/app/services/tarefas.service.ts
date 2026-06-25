@@ -57,7 +57,11 @@ export class TarefasService {
 
 	// método modificado por ia pra ficar de acordo, varios bo envolvendo o tipo de tarefa id e etc
 	obterPorId(id: string, usuarioId?: string): TarefaModel | null {
-		return this.obterTodas().find((tarefa) => tarefa.id == id && (!usuarioId || (tarefa as any).usuario?.idUsuario == usuarioId)) || null;
+		return this.obterTodas().find((tarefa) => tarefa.id == id && (!usuarioId || tarefa.usuarioId == usuarioId)) || null;
+	}
+
+	buscarPorId(id: string): Observable<TarefaModel> {
+		return this.http.get<TarefaModel>(`${this.API_URL}/${id}`);
 	}
 
 	criar(input: NovaTarefaInput, usuarioId: string): TarefaModel {
