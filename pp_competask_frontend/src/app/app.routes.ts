@@ -27,6 +27,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/nova-comunidade/nova-comunidade.page').then((m) => m.NovaComunidadePage),
   },
   {
+    path: 'comunidades/editar/:id',
+    loadComponent: () => import('./pages/nova-comunidade/nova-comunidade.page').then((m) => m.NovaComunidadePage),
+  },
+  {
     path: 'comunidades/:id',
     loadComponent: () => import('./pages/comunidade-detalhe/comunidade-detalhe.page').then((m) => m.ComunidadeDetalhePage),
   },

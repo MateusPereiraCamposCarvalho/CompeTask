@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -118,8 +119,8 @@ export class TarefaPage {
         next: (resultado: TarefaModel) => {
           this.router.navigate(['/tarefas']);
         },
-        error: () => {
-          console.log("deu erro aqui na hora de ATUALIZAR tarefa do usuario no banco")
+        error: (erro: HttpErrorResponse) => {
+          this.tratarErroSalvar(erro);
         }
       });
     } else {
@@ -128,8 +129,8 @@ export class TarefaPage {
         next: (resultado: TarefaModel) => {
           this.router.navigate(['/tarefas']);
         },
-        error: () => {
-          console.log("deu erro aqui na hora de criar tarefa do usuario no banco")
+        error: (erro: HttpErrorResponse) => {
+          this.tratarErroSalvar(erro);
         }
       });
     }
@@ -225,5 +226,31 @@ export class TarefaPage {
 
   private obterTarefaPorId(id: string, usuarioId: string): TarefaModel | null {
     return this.tarefasService.obterPorId(id, usuarioId);
+  }
+
+  private tratarErroSalvar(erro: HttpErrorResponse): void {
+    const mensagem = this.obterMensagemErro(erro);
+    this.mensagemAcao = mensagem;
+
+    if (mensagem.includes('Usuario nao encontrado')) {
+      this.usuarioService.excluirSessao();
+      this.router.navigate(['/login']);
+    }
+  }
+
+  private obterMensagemErro(erro: HttpErrorResponse): string {
+    if (typeof erro.error === 'string') {
+      return erro.error;
+    }
+
+    if (erro.error?.message) {
+      return String(erro.error.message);
+    }
+
+    if (erro.message) {
+      return String(erro.message);
+    }
+
+    return 'Nao foi possivel salvar a tarefa.';
   }
 }

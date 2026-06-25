@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 
 import br.cefetmg.pp_competask.dto.TarefaRequestDTO;
@@ -23,7 +24,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/tarefas")
-@CrossOrigin(origins = "//editar ")
+@CrossOrigin(origins = "http://localhost:8100")
 public class TarefaController {
 
     @Autowired
@@ -37,31 +38,47 @@ public class TarefaController {
     }
 
     //buscar tarefa por id
-    // @GetMapping("/{id}")
-    // public Tarefa getById(@PathVariable Long id){
-    //     return repository.findById(id).orElse(null);
-    // }
+    @GetMapping("/{id}")
+    public ResponseEntity<TarefaResponseDTO> getById(@PathVariable Long id){
+        try {
+            return ResponseEntity.ok(tarefaService.buscarPorId(id));
+        } catch (IllegalArgumentException ex) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+    }
 
     //inserir tarefa
     @PostMapping("")
     public ResponseEntity<TarefaResponseDTO> inserir(@Valid @RequestBody TarefaRequestDTO tarefaRequestDTO){
-        TarefaResponseDTO tarefaResponseDTO = tarefaService.inserir(tarefaRequestDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(tarefaResponseDTO);
+        try {
+            TarefaResponseDTO tarefaResponseDTO = tarefaService.inserir(tarefaRequestDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body(tarefaResponseDTO);
+        } catch (IllegalArgumentException ex) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
+        }
     }
 
     //editar tarefa
     @PutMapping("/{id}")
     public ResponseEntity<TarefaResponseDTO> atualizar(@PathVariable Long id, @RequestBody TarefaRequestDTO tarefaRequestDTO){
-        TarefaResponseDTO tarefaResponseDTO = tarefaService.atualizar(id, tarefaRequestDTO);
-        return ResponseEntity.ok(tarefaResponseDTO);
+        try {
+            TarefaResponseDTO tarefaResponseDTO = tarefaService.atualizar(id, tarefaRequestDTO);
+            return ResponseEntity.ok(tarefaResponseDTO);
+        } catch (IllegalArgumentException ex) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
+        }
     }
 
 
     //excluir tarefa
     @DeleteMapping("/{id}")
     public ResponseEntity<TarefaResponseDTO> excluir(@PathVariable Long id){
-       tarefaService.excluir(id);
-       return ResponseEntity.noContent().build();
+       try {
+           tarefaService.excluir(id);
+           return ResponseEntity.noContent().build();
+       } catch (IllegalArgumentException ex) {
+           throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+       }
     }
 
 }

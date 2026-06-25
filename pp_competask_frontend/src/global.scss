@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;800&display=swap');
 
 /*
  * App Global CSS
@@ -43,14 +43,19 @@ body {
 	height: 100%;
 }
 
+:root {
+	--ion-font-family: 'Roboto', 'Segoe UI', Arial, sans-serif;
+}
+
 body {
 	margin: 0;
-	font-family: 'Space Grotesk', 'Segoe UI', sans-serif;
+	font-family: 'Roboto', 'Segoe UI', Arial, sans-serif;
 	background: #0b0717;
 	color: #f3f0ff;
 }
 
 ion-app {
+	font-family: 'Roboto', 'Segoe UI', Arial, sans-serif;
 	color: #f3f0ff;
 }
 

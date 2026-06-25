@@ -47,8 +47,8 @@
   display: block;
   margin: 8px 0 2px;
   color: #162050;
-  font-size: 0.82rem;
-  font-weight: 500;
+  font-size: 0.78rem;
+  font-weight: 600;
 }
 
 .input-shell,
@@ -58,12 +58,12 @@
   gap: 10px;
   width: 100%;
   min-height: 47px;
-  padding: 0 14px;
-  border: 0;
-  border-radius: 10px;
-  background: #52008c;
-  color: #ffffff;
-  box-shadow: 0 8px 18px rgba(82, 0, 140, 0.08);
+  padding: 0 12px;
+  border: 1.5px solid #52008c;
+  border-radius: 8px;
+  background: #eaf0f8;
+  color: #1b214d;
+  box-shadow: none;
 }
 
 .task-title {
@@ -80,19 +80,19 @@
   border: 0;
   outline: none;
   background: transparent;
-  color: #ffffff;
+  color: #1b214d;
   font: inherit;
-  font-size: 0.9rem;
+  font-size: 0.86rem;
 }
 
 .input-shell input::placeholder,
 .textarea-shell textarea::placeholder {
-  color: rgba(255, 255, 255, 0.9);
+  color: #6d5a90;
 }
 
 .input-shell input[type='date'],
 .input-shell input[type='time'] {
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 .textarea-shell {
@@ -139,13 +139,13 @@
 .primary-button {
   height: 50px;
   margin-top: 8px;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: 0;
   --background: #12cbc5;
   --background-activated: #10bcb6;
   --color: #091b2f;
   --box-shadow: 0 12px 18px rgba(18, 203, 197, 0.3);
-  --border-radius: 12px;
+  --border-radius: 8px;
 }
 
 .danger-button {
@@ -173,7 +173,7 @@
   grid-template-columns: repeat(4, 1fr);
   gap: 4px;
   padding: 10px 12px 14px;
-  background: #5a00a0;
+  background: #52008c;
   border-top: 0;
   box-shadow: 0 -8px 24px rgba(52, 10, 92, 0.16);
 }
