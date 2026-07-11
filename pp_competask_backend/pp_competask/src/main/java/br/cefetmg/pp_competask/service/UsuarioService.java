@@ -1,110 +1,103 @@
 package br.cefetmg.pp_competask.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 // import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import br.cefetmg.pp_competask.dto.UsuarioResponseLoginDTO;
+import br.cefetmg.pp_competask.dto.AutentificacaoRequestDTO;
+import br.cefetmg.pp_competask.dto.UsuarioRequestDTO;
+import br.cefetmg.pp_competask.dto.UsuarioResponseDTO;
 import br.cefetmg.pp_competask.model.Usuario;
 import br.cefetmg.pp_competask.repository.UsuarioRepository;
 
 @Service
 public class UsuarioService {
 
-    private final UsuarioRepository repository;
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
-    public UsuarioService(UsuarioRepository repository) {
-        this.repository = repository;
-    }
-
-    public Usuario salvar(Usuario usuario) {
-        if (!existeEmail(usuario.getEmail())) {
-            return repository.save(usuario);
+    @Transactional
+    public UsuarioResponseDTO inserir(UsuarioRequestDTO dto){
+        //se nao existir pode criar, se existir e estiver desativado ai tem que ver os role
+        if (!usuarioRepository.existsByEmail(dto.getEmail())) {
+            Usuario usuario = new Usuario();
+            usuario.setAtivo(true);
+            usuario.setEmail(dto.getEmail());
+            usuario.setFoto(dto.getFoto());
+            usuario.setNome(dto.getNome());
+            usuario.setStreak(0);
+            usuario.setSenha(dto.getSenha());
+            return new UsuarioResponseDTO(usuarioRepository.save(usuario));
         }
 
         throw new IllegalArgumentException("E-mail já cadastrado.");
     }
 
-    // public List<Usuario> listarAtivos() {
-    //     return repository.findAll().stream()
-    //         .filter(usuario -> Boolean.TRUE.equals(usuario.getAtivo()))
-    //         .toList();
-    // }
+    @Transactional(readOnly = true)
+    public UsuarioResponseDTO findById(Long id) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new IllegalStateException("Usuário não encontrado."));
 
-    public Usuario findById(Long id) {
-        Usuario usuario = repository.findById(id)
-            .orElseThrow(() -> new IllegalStateException("Usuário não encontrado."));
-
-        validarUsuarioAtivo(usuario);
-
-        return usuario;
-    }
-
-    public boolean existeEmail(String email) {
-        return repository.findAll().stream()
-            .anyMatch(usuario -> Boolean.TRUE.equals(usuario.getAtivo()) && email.equals(usuario.getEmail()));
-    }
-
-    public UsuarioResponseLoginDTO login(String email, String senha) {
-        Usuario usuario = repository.findByEmailAndSenha(email, senha);
-
-        validarUsuarioAtivoOuLoginInvalido(usuario);
-
-        //GAMIBARRA?
-        UsuarioResponseLoginDTO usuarioResponseLoginDTO = new UsuarioResponseLoginDTO(usuario);
-
-        return usuarioResponseLoginDTO;
-    }
-
-    public Usuario alterar(Usuario usuario) {
-        if (usuario.getIdUsuario() == null) {
-            throw new IllegalArgumentException("id é obrigatório.");
-        }
-
-        Usuario existente = repository.findById(usuario.getIdUsuario())
-            .orElseThrow(() -> new IllegalStateException("Usuário não encontrado."));
-
-        validarUsuarioAtivo(existente);
-
-        boolean emailEmUsoPorOutroAtivo = repository.findAll().stream()
-            .anyMatch(outro -> Boolean.TRUE.equals(outro.getAtivo())
-                && !outro.getIdUsuario().equals(usuario.getIdUsuario())
-                && usuario.getEmail().equals(outro.getEmail()));
-
-        if (emailEmUsoPorOutroAtivo) {
-            throw new IllegalArgumentException("E-mail já cadastrado.");
-        }
-
-        existente.setNome(usuario.getNome());
-        existente.setEmail(usuario.getEmail());
-        existente.setSenha(usuario.getSenha());
-        existente.setFoto(usuario.getFoto());
-        existente.setStreak(usuario.getStreak());
-
-        return repository.save(existente);
-    }
-
-    public Usuario desativar(Long id) {
-        Usuario existente = repository.findById(id)
-            .orElseThrow(() -> new IllegalStateException("Usuário não encontrado."));
-
-        validarUsuarioAtivo(existente);
-
-        existente.setAtivo(false);
-
-        return repository.save(existente);
-    }
-
-    private void validarUsuarioAtivo(Usuario usuario) {
-        if (!Boolean.TRUE.equals(usuario.getAtivo())) {
+        if (!usuario.getAtivo()){
             throw new IllegalStateException("Usuário não encontrado.");
         }
+
+        return new UsuarioResponseDTO(usuario);
     }
 
-    private void validarUsuarioAtivoOuLoginInvalido(Usuario usuario) {
-        if (usuario == null || !Boolean.TRUE.equals(usuario.getAtivo())) {
-            throw new IllegalArgumentException("E-mail ou senha inválidos.");
+    @Transactional(readOnly = true)
+    public boolean existeEmail(String email) {
+        Usuario usuario = usuarioRepository.findByEmail(email);
+
+        if (usuario.getAtivo()){
+            return true;
+        }else{
+            // é aqui que entra a lógica de tipo reativar a conta futuramente 
+            return false;
         }
     }
 
+    @Transactional
+    public UsuarioResponseDTO login(AutentificacaoRequestDTO dto){
+        Usuario usuario = usuarioRepository.findByEmailAndSenha(dto.getEmail(), dto.getSenha());
+
+        if (usuario == null || !usuario.getAtivo()){
+            throw new IllegalArgumentException("Email ou senha inválidos.");
+        }
+
+        return new UsuarioResponseDTO(usuario);
+    }
+
+
+    @Transactional
+    public UsuarioResponseDTO excluir(Long id){
+        if (!usuarioRepository.existsById(id)) {
+            throw new IllegalArgumentException("Usuario nao encontrado.");
+        }
+
+        Usuario usuario = usuarioRepository.findById(id).orElse(null);
+        if (usuario.getAtivo()){
+            usuario.setAtivo(false);
+        }
+
+        return new UsuarioResponseDTO(usuarioRepository.save(usuario));
+    }
+
+
+    @Transactional // -> nao pode alterar email
+    public UsuarioResponseDTO alterar(Long id, UsuarioRequestDTO dto){
+        Usuario usuario = usuarioRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Usuario nao encontrado."));
+
+        //ver se usuario ta ativo? meio que nao precisa mas adicionaria uma seguranca a mais
+
+        usuario.setFoto(dto.getFoto());
+        usuario.setNome(dto.getNome());
+        usuario.setSenha(dto.getSenha());
+
+        return new UsuarioResponseDTO(usuarioRepository.save(usuario));
+
+    }
 }

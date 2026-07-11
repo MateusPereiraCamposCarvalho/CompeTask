@@ -5,24 +5,22 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Setter
+
 @Getter
+@Setter
 @NoArgsConstructor
-public class UsuarioResponseLoginDTO {
-    
+public class UsuarioResponseDTO {
     private Long idUsuario;
     private String nome;
     private String email;
-    private String senha;
+    private String foto;
     private Integer streak;
-    private Boolean ativo; 
 
-    public UsuarioResponseLoginDTO(Usuario usuario){
+    public UsuarioResponseDTO(Usuario usuario){
         this.idUsuario = usuario.getIdUsuario();
         this.nome = usuario.getNome();
         this.email = usuario.getEmail();
-        this.senha = usuario.getSenha();
+        this.foto = usuario.getFoto();
         this.streak = usuario.getStreak();
-        this.ativo = usuario.getAtivo();
     }
 }

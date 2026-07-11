@@ -2,9 +2,10 @@ package br.cefetmg.pp_competask.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -14,11 +15,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import br.cefetmg.pp_competask.dto.UsuarioResponseLoginDTO;
-import br.cefetmg.pp_competask.model.Usuario;
+import br.cefetmg.pp_competask.dto.AutentificacaoRequestDTO;
+import br.cefetmg.pp_competask.dto.UsuarioRequestDTO;
+import br.cefetmg.pp_competask.dto.UsuarioResponseDTO;
 import br.cefetmg.pp_competask.service.UsuarioService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/usuarios")
@@ -27,88 +30,76 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class UsuarioController {
 
     @Autowired
-    private UsuarioService service;
+    private UsuarioService usuarioService;
 
-    // public UsuarioController(UsuarioRepository repository, UsuarioService service){
-    //     this.repository = repository;
-    //     this.service = service;
-    // }    
-
-    // @GetMapping("")
-    // public List<Usuario> getAll(){
-    //     return service.listarAtivos();
-    // }
 
     @GetMapping("/{id}")
-    @Operation(
-        summary = "Buscar usuário por ID", 
-        description = ""
-    )
-    public Usuario getById(@PathVariable Long id){
+    @Operation(summary = "Buscar usuário por ID")
+    public ResponseEntity<UsuarioResponseDTO> getById(@PathVariable Long id){
         try {
-            return service.findById(id);
+            return ResponseEntity.ok(usuarioService.findById(id));
         } catch (IllegalStateException ex) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
         }
     }
 
+
     @GetMapping("/checkEmail")
-    @Operation(
-        summary = "Checar email disponível", 
-        description = ""
-    )
-    public boolean existeEmail(@RequestParam("email") String email){
-        return service.existeEmail(email);
+    @Operation(summary = "Checar disponibilidade do email")
+    public boolean existeEmail(@RequestParam String email){
+        return usuarioService.existeEmail(email);
     }
 
-    @GetMapping("/login") //deve ser POST com JSON
-    @Operation(
-        summary = "Login", 
-        description = ""
-    )
-    public UsuarioResponseLoginDTO login(@RequestParam("email") String email,  @RequestParam("senha") String senha){
+
+    @PostMapping("/login") //deve ser POST com JSON
+    @Operation(summary = "Login")
+    public ResponseEntity<UsuarioResponseDTO> login(@RequestBody AutentificacaoRequestDTO autentificacaoRequestDTO){
         try {
-            return service.login(email, senha);
+            return ResponseEntity.ok(usuarioService.login(autentificacaoRequestDTO));
         } catch (IllegalArgumentException ex) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, ex.getMessage());
         }
     }
 
+
     @PostMapping("")
-    @Operation(
-        summary = "Criar usuário", 
-        description = ""
-    )
-    public Usuario inserir(@RequestBody Usuario usuario){
-        usuario.setIdUsuario(null);
-        try {
-            return service.salvar(usuario);
+    @Operation(summary = "Criar usuário")
+    public ResponseEntity<UsuarioResponseDTO> inserir(@RequestBody @Valid UsuarioRequestDTO usuarioRequestDTO){
+         try {
+            UsuarioResponseDTO usuarioResponseDTO = usuarioService.inserir(usuarioRequestDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body(usuarioResponseDTO);
         } catch (IllegalArgumentException ex) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, ex.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
         }
     }
 
-    @DeleteMapping("/{id}")
-    @Operation(
-        summary = "Excluir usuário", 
-        description = ""
-    )
-    public Usuario excluir(@PathVariable Long id){
-        try {
-            return service.desativar(id);
-        } catch (IllegalStateException ex) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
-        }
+
+
+    //não precisa existir porque meio que nao deleta só muda um bagulho, vai virar patch
+    // @DeleteMapping("/{id}")
+    // @Operation(summary = "Excluir usuário")
+    // public ResponseEntity<UsuarioResponseDTO> excluir(@PathVariable Long id){
+    //     try {
+    //         return u.desativar(id);
+    //     } catch (IllegalStateException ex) {
+    //         throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+    //     }
+    // }
+
+    @PatchMapping("/excluir/{id}")
+    @Operation(summary = "Alterar atividade do usuário")
+    public ResponseEntity<UsuarioResponseDTO> excluir(@PathVariable Long id){
+        UsuarioResponseDTO usuarioResponseDTO = usuarioService.excluir(id);
+        return ResponseEntity.ok(usuarioResponseDTO);
     }
 
-    @PutMapping("")
-    @Operation(
-        summary = "Editar usuário", 
-        description = ""
-    )
-    public Usuario alterar(@RequestBody Usuario usuario){
+
+
+    @PutMapping("/{id}")
+    @Operation(summary = "Editar usuário")
+    public ResponseEntity<UsuarioResponseDTO> alterar(@RequestBody UsuarioRequestDTO usuarioRequestDTO, @PathVariable Long id){
         try {
-            return service.alterar(usuario);
+            return ResponseEntity.ok(usuarioService.alterar(id, usuarioRequestDTO));
         } catch (IllegalStateException ex) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
         } catch (IllegalArgumentException ex) {

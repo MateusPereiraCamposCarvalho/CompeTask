@@ -16,7 +16,7 @@ import br.cefetmg.pp_competask.repository.UsuarioRepository;
 
 @Service
 public class TarefaService {
-    
+
     @Autowired
     private TarefaRepository tarefaRepository;
 
@@ -24,23 +24,23 @@ public class TarefaService {
     private UsuarioRepository usuarioRepository;
 
     @Transactional(readOnly = true)
-    public List<TarefaResponseDTO> buscarTarefasPorUsuarioId(Long id){
+    public List<TarefaResponseDTO> buscarTarefasPorUsuarioId(Long id) {
         List<Tarefa> tarefas = tarefaRepository.findAllByUsuarioIdUsuario(id);
         return tarefas.stream().map(TarefaResponseDTO::new).toList();
     }
 
     @Transactional(readOnly = true)
-    public TarefaResponseDTO buscarPorId(Long id){
+    public TarefaResponseDTO buscarPorId(Long id) {
         Tarefa tarefa = tarefaRepository.findById(id)
-            .orElseThrow(() -> new IllegalArgumentException("Tarefa nao encontrada."));
+                .orElseThrow(() -> new IllegalArgumentException("Tarefa nao encontrada."));
 
         return new TarefaResponseDTO(tarefa);
     }
 
     @Transactional
-    public TarefaResponseDTO inserir(TarefaRequestDTO dto){
+    public TarefaResponseDTO inserir(TarefaRequestDTO dto) {
         Usuario usuario = usuarioRepository.findById(dto.getUsuarioId())
-            .orElseThrow(() -> new IllegalArgumentException("Usuario nao encontrado. Faca login novamente."));
+                .orElseThrow(() -> new IllegalArgumentException("Usuario nao encontrado. Faca login novamente."));
 
         Tarefa tarefa = new Tarefa();
         tarefa.setUsuario(usuario);
@@ -53,15 +53,15 @@ public class TarefaService {
         tarefa.setTempoExecucao(dto.getTempoExecucao());
         tarefa.setConcluida(false);
         tarefa.setDataConfeccao(null);
-        
+
         return new TarefaResponseDTO(tarefaRepository.save(tarefa));
     }
 
     @Transactional
-    public TarefaResponseDTO atualizar(Long id, TarefaRequestDTO dto){
-        //ver se existe tarefa com esse id
+    public TarefaResponseDTO atualizar(Long id, TarefaRequestDTO dto) {
+        // ver se existe tarefa com esse id
         Tarefa tarefa = tarefaRepository.findById(id)
-            .orElseThrow(() -> new IllegalArgumentException("Tarefa nao encontrada."));
+                .orElseThrow(() -> new IllegalArgumentException("Tarefa nao encontrada."));
 
         tarefa.setTitulo(dto.getTitulo());
         tarefa.setDescricao(dto.getDescricao());
@@ -85,12 +85,28 @@ public class TarefaService {
     }
 
     @Transactional
-    public void excluir(Long id){
-        //verificar se existe pra ai mandar excluir
+    public void excluir(Long id) {
+        // verificar se existe pra ai mandar excluir
         if (!tarefaRepository.existsById(id)) {
             throw new IllegalArgumentException("Tarefa nao encontrada.");
         }
 
         tarefaRepository.deleteById(id);
+    }
+
+    @Transactional
+    public TarefaResponseDTO alterarConclusao(Long id) {
+        if (!tarefaRepository.existsById(id)) {
+            throw new IllegalArgumentException("Tarefa nao encontrada.");
+        }
+
+        Tarefa tarefa = tarefaRepository.findById(id).orElse(null);
+        if (tarefa.isConcluida()){
+            tarefa.setConcluida(false);
+        }else{
+            tarefa.setConcluida(true);
+        }
+
+        return new TarefaResponseDTO(tarefaRepository.save(tarefa));
     }
 }
