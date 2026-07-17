@@ -136,7 +136,7 @@ export class CadastroPage {
     leitor.onload = () => {
       const fotoBase64 = String(leitor.result || '');
       this.fotoPreview = fotoBase64;
-      this.cadastroForm.patchValue({ foto: '' });
+      this.cadastroForm.patchValue({ foto: fotoBase64 });
     };
     leitor.readAsDataURL(arquivo);
   }

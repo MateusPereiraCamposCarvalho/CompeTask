@@ -42,7 +42,7 @@ public class Comunidade {
     @Column(name = "acesso", nullable = false, length = 20)
     private TipoAcesso tipoAcesso; 
 
-    @Column(columnDefinition = "TEXT", nullable = true)
+    @Column(columnDefinition = "LONGTEXT", nullable = true)
     private String foto;
 
     @OneToMany(mappedBy = "comunidade", cascade = CascadeType.ALL)

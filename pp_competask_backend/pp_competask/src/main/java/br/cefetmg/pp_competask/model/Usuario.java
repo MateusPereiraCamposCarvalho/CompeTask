@@ -40,7 +40,7 @@ public class Usuario {
     @Column(length = 255, nullable = false)
     private String senha;
 
-    @Column(columnDefinition = "TEXT", nullable = true)
+    @Column(columnDefinition = "LONGTEXT", nullable = true)
     private String foto; //na teoria daria pra ja comecar a foto com uma url de imagem padrao (aquele bonequinho la) ai caso o usuario nao bote foto, vai essa padrao e se botar so sobrescreve
 
     @Column(nullable = false)
