@@ -101,11 +101,23 @@ public class TarefaService {
         }
 
         Tarefa tarefa = tarefaRepository.findById(id).orElse(null);
-        if (tarefa.isConcluida()){
+        if (tarefa.isConcluida()) {
             tarefa.setConcluida(false);
-        }else{
+        } else {
             tarefa.setConcluida(true);
         }
+
+        return new TarefaResponseDTO(tarefaRepository.save(tarefa));
+    }
+
+    @Transactional
+    public TarefaResponseDTO timerTarefa(Long id, String tempoExecucao) {
+        if (!tarefaRepository.existsById(id)) {
+            throw new IllegalArgumentException("Tarefa nao encontrada.");
+        }
+
+        Tarefa tarefa = tarefaRepository.findById(id).orElse(null);
+        tarefa.setTempoExecucao(tempoExecucao);
 
         return new TarefaResponseDTO(tarefaRepository.save(tarefa));
     }

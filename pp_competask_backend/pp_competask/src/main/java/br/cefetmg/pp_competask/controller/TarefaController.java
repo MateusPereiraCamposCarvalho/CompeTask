@@ -19,6 +19,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import br.cefetmg.pp_competask.dto.TarefaRequestDTO;
 import br.cefetmg.pp_competask.dto.TarefaResponseDTO;
+import br.cefetmg.pp_competask.dto.TarefaTempoExecucaoPatchDTO;
 import br.cefetmg.pp_competask.service.TarefaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -92,6 +93,15 @@ public class TarefaController {
     @Operation(summary = "Editar tarefa")
     public ResponseEntity<TarefaResponseDTO> alterarConclusao(@PathVariable Long id){
         TarefaResponseDTO tarefaResponseDTO = tarefaService.alterarConclusao(id);
+        return ResponseEntity.ok(tarefaResponseDTO);
+    }
+
+
+    //adicionar e alterar o tempo de conclusão de uma tarefa 
+    @PatchMapping("/timer/{id}")
+    @Operation(summary = "Adicionar e editar tempo de conclsuão de uma tarefa")
+    public ResponseEntity<TarefaResponseDTO> timerTarefa(@PathVariable Long id, @Valid @RequestBody TarefaTempoExecucaoPatchDTO tempoExecucao){
+        TarefaResponseDTO tarefaResponseDTO = tarefaService.timerTarefa(id, tempoExecucao.getTempoExecucao());
         return ResponseEntity.ok(tarefaResponseDTO);
     }
 
