@@ -46,18 +46,21 @@ export class UsuarioService {
   // }
 
   salvar(usuario: UsuarioModel): Observable<UsuarioModel> {
-    return this.http.post<UsuarioModel>(this.API_URL, usuario);
+    const payload = this.converterParaBackend(usuario);
+
+    return this.http.post<any>(this.API_URL, payload).pipe(
+      map((resultado: any) => this.converterParaModelo({ ...resultado, senha: usuario.senha }))
+    );
   }
 
   login(email: string, senha: string): Observable<UsuarioModel> {
-    const params = new HttpParams().set('email', email).set('senha', senha);
-    return this.http.get<any>(`${this.API_URL}/login`, {params}).pipe(
-      map((resultado: any) => this.converterParaModelo(resultado))
+    return this.http.post<any>(`${this.API_URL}/login`, { email, senha }).pipe(
+      map((resultado: any) => this.converterParaModelo({ ...resultado, senha }))
     );
   }
-  //esse pipe e esse map tem que usar pra 'converter' o que vem do back pro front, acho que tem como fazer sem usando outras taticas
+
   excluirUsuario(id: string): Observable<UsuarioModel> {
-    return this.http.delete<any>(`${this.API_URL}/${id}`).pipe(
+    return this.http.patch<any>(`${this.API_URL}/excluir/${id}`, {}).pipe(
       map((resultado: any) => {
         const usuarioDesativado = this.converterParaModelo(resultado);
         this.excluirSessao();
@@ -106,9 +109,9 @@ export class UsuarioService {
   atualizarUsuarioLocal(usuario: UsuarioModel): Observable<UsuarioModel> {
     const payload = this.converterParaBackend(usuario);
 
-    return this.http.put<UsuarioModel>(this.API_URL, payload).pipe(
+    return this.http.put<any>(`${this.API_URL}/${usuario.id}`, payload).pipe(
       map((resultado: any) => {
-        const usuarioAtualizado = this.converterParaModelo(resultado);
+        const usuarioAtualizado = this.converterParaModelo({ ...resultado, senha: usuario.senha });
         this.salvarSessao(usuarioAtualizado);
         return usuarioAtualizado;
       })
@@ -117,12 +120,10 @@ export class UsuarioService {
 
   private converterParaBackend(usuario: UsuarioModel) {
     return {
-      idUsuario: usuario.id,
       nome: usuario.nome,
       email: usuario.email,
       senha: usuario.senha,
       foto: usuario.foto,
-      streak: usuario.diasStreak,
     };
   }
 
