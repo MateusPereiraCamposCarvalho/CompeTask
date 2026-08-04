@@ -51,7 +51,7 @@ export class TarefaPage {
   atalhosRodape: AtalhoRodape[] = [
     { label: 'Tarefas', icon: 'checkmark-circle-outline', rota: '/tarefas', ativo: true },
     { label: 'Comunidades', icon: 'people-outline', rota: '/comunidades' },
-    { label: 'Timer', icon: 'timer-outline' },
+    { label: 'Timer', icon: 'timer-outline', rota: '/timer' },
     { label: 'Usuário', icon: 'person-outline', rota: '/usuario' },
   ];
 

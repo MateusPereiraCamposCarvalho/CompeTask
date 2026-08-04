@@ -1,0 +1,109 @@
+<ion-content [fullscreen]="true" class="timer-screen">
+  <section class="timer-shell">
+    <header class="timer-header">
+      <h1>Timer e Cronometro</h1>
+      <p>Marque seu foco e salve direto na tarefa.</p>
+    </header>
+
+    <div class="segment" role="tablist" aria-label="Modo de contagem">
+      <button
+        type="button"
+        class="segment__item"
+        [class.segment__item--active]="abaAtual === 'cronometro'"
+        (click)="selecionarAba('cronometro')">
+        <ion-icon name="timer-outline"></ion-icon>
+        <span>Cronometro</span>
+      </button>
+
+      <button
+        type="button"
+        class="segment__item"
+        [class.segment__item--active]="abaAtual === 'timer'"
+        (click)="selecionarAba('timer')">
+        <ion-icon name="hourglass-outline"></ion-icon>
+        <span>Timer</span>
+      </button>
+    </div>
+
+    <ng-container *ngIf="abaAtual === 'cronometro'; else timerEmBreve">
+      <section class="dial-wrap">
+        <div class="dial">
+          <strong>{{ tempoExibidoCronometro }}</strong>
+        </div>
+      </section>
+
+      <section class="actions" *ngIf="!mostrarAcoesPausa">
+        <button
+          type="button"
+          class="cta-button"
+          (click)="rodando ? pausarCronometro() : iniciarCronometro()">
+          <ion-icon [name]="rodando ? 'pause-outline' : 'play-outline'"></ion-icon>
+          <span>{{ rodando ? 'PAUSAR' : 'INICIAR' }}</span>
+        </button>
+      </section>
+
+      <section class="actions actions--split" *ngIf="mostrarAcoesPausa">
+        <button type="button" class="ghost-button" (click)="pararCronometro()">
+          <ion-icon name="stop-outline"></ion-icon>
+          <span>PARAR</span>
+        </button>
+
+        <button type="button" class="cta-button" (click)="retomarCronometro()">
+          <ion-icon name="play-outline"></ion-icon>
+          <span>RETOMAR</span>
+        </button>
+      </section>
+    </ng-container>
+
+    <ng-template #timerEmBreve>
+      <section class="timer-placeholder">
+        <h2>Modo timer</h2>
+        <p>O modo de contagem regressiva sera liberado em breve.</p>
+      </section>
+    </ng-template>
+
+    <p class="action-message" *ngIf="mensagemAcao">{{ mensagemAcao }}</p>
+  </section>
+
+  <div class="modal-backdrop" *ngIf="modalSalvarAberto" (click)="fecharModalSalvar()"></div>
+
+  <section class="save-modal" *ngIf="modalSalvarAberto" aria-label="Salvar registro">
+    <button type="button" class="save-modal__close" (click)="fecharModalSalvar()" aria-label="Fechar modal">
+      <ion-icon name="close-outline"></ion-icon>
+    </button>
+
+    <h2>Salvar registro?</h2>
+    <p>Deseja salvar este registro nas anotacoes de alguma tarefa?</p>
+
+    <div class="record-preview">{{ registroPendente }}</div>
+
+    <label class="field-label" for="tarefa-select">Tarefa</label>
+    <label class="input-shell" for="tarefa-select">
+      <select id="tarefa-select" [(ngModel)]="tarefaSelecionadaId">
+        <option value="">Selecione uma tarefa...</option>
+        <option *ngFor="let tarefa of tarefas" [value]="tarefa.id">
+          {{ tarefa.titulo }}
+        </option>
+      </select>
+    </label>
+
+    <p class="modal-message" *ngIf="mensagemModal">{{ mensagemModal }}</p>
+
+    <div class="save-modal__actions">
+      <button type="button" class="ghost-button" (click)="descartarRegistro()">DESCARTAR</button>
+      <button type="button" class="save-button" (click)="salvarRegistro()">SALVAR</button>
+    </div>
+  </section>
+
+  <nav class="bottom-nav" aria-label="Navegacao inferior">
+    <button
+      *ngFor="let atalho of atalhosRodape"
+      type="button"
+      class="nav-item"
+      [class.nav-item--active]="atalho.ativo"
+      (click)="abrirAtalho(atalho)">
+      <ion-icon [name]="atalho.icon"></ion-icon>
+      <span>{{ atalho.label }}</span>
+    </button>
+  </nav>
+</ion-content>

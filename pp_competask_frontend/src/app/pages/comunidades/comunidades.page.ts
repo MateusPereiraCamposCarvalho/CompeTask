@@ -50,7 +50,7 @@ export class ComunidadesPage {
   atalhosRodape: AtalhoRodape[] = [
     { label: 'Tarefas', icon: 'checkmark-circle-outline', rota: '/tarefas' },
     { label: 'Comunidades', icon: 'people-outline', ativo: true },
-    { label: 'Timer', icon: 'timer-outline' },
+    { label: 'Timer', icon: 'timer-outline', rota: '/timer' },
     { label: 'Usuario', icon: 'person-outline', rota: '/usuario' },
   ];
 

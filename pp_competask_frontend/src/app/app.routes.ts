@@ -47,6 +47,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/add-tarefa/add-tarefa.page').then((m) => m.TarefaPage),
   },
   {
+    path: 'timer',
+    loadComponent: () => import('./pages/timer/timer.page').then((m) => m.TimerPage),
+  },
+  {
     path: '**',
     redirectTo: 'login',
   },
