@@ -127,14 +127,7 @@ export class TarefasService {
 	}
 
 	alternarConclusao(tarefa: TarefaModel, usuarioId: string): Observable<TarefaModel> {
-		const concluindoAgora = !tarefa.concluida;
-		const payload = {
-			...tarefa,
-			usuarioId: Number(usuarioId) as unknown as string,
-			concluida: concluindoAgora,
-		};
-
-		return this.atualizar(tarefa.id, payload);
+		return this.http.patch<TarefaModel>(`${this.API_URL}/conclusao/${tarefa.id}`, {});
 	}
 
 	//ta em comentario só por contad do nome, nao quero dar conflito com o metodo de baixo ai

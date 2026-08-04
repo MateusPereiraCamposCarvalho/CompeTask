@@ -52,36 +52,23 @@ export class CadastroPage {
       return;
     }
 
-    this.usuarioService.emailEmUso(String(this.cadastroForm.value.email || '').trim()).subscribe({
-      next: (emailTaEmUso: boolean) => {
-        if (!emailTaEmUso) {
-          this.usuarioService.salvar(this.cadastroForm.value).subscribe({
-            next: (resultado: UsuarioModel) => {
-              this.usuarioService.salvarSessao(resultado);
-              this.router.navigate(['/login']);
-            },
-            error: (erro) => {
-              if (erro.status === 409) {
-                this.exibirMensagem('Email já cadastrado.');
-                return;
-              }
-
-              this.exibirMensagem('Erro ao cadastrar usuário.');
-            }
-          });
-        } else {
-          const emailCtrl = this.cadastroForm.get('email');
-          emailCtrl?.setValue('');                     // limpa o campo
-          emailCtrl?.setErrors({ emailEmUso: true }); // define erro customizado
-          emailCtrl?.markAsTouched();                  // mostra estado tocado (exibe validação)
-          emailCtrl?.updateValueAndValidity();
-          this.exibirMensagem('Email já em uso.');
-        }
+    this.usuarioService.salvar(this.cadastroForm.value).subscribe({
+      next: (resultado: UsuarioModel) => {
+        this.usuarioService.salvarSessao(resultado);
+        this.router.navigate(['/login']);
       },
       error: (erro) => {
+        if (erro.status === 400 && erro.error?.message === 'E-mail já cadastrado.') {
+          const emailCtrl = this.cadastroForm.get('email');
+          emailCtrl?.setErrors({ emailEmUso: true });
+          emailCtrl?.markAsTouched();
+          this.exibirMensagem('Email já cadastrado.');
+          return;
+        }
+
         this.exibirMensagem('Erro ao cadastrar usuário.');
       }
-    })
+    });
 
     // let salvo = this.usuarioService.salvar(this.cadastroForm.value);
     // if (!salvo) {
