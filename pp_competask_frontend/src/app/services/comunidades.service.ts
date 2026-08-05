@@ -9,7 +9,8 @@ import { ComunidadeInput, ComunidadeModel } from '../models/comunidade.model';
   providedIn: 'root',
 })
 export class ComunidadesService {
-  private readonly API_URL = 'http://localhost:8080/api/v1/comunidades';
+  // private readonly API_URL = 'http://localhost:8080/api/v1/comunidades';
+  private readonly API_URL = 'https://competask.onrender.com/api/v1/comunidades';
 
   constructor(private http: HttpClient) { }
 

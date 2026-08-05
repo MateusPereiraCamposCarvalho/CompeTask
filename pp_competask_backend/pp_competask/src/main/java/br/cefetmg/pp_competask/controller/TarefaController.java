@@ -27,7 +27,8 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/tarefas")
-@CrossOrigin(origins = "http://localhost:8100")
+// @CrossOrigin(origins = "http://localhost:8100")
+@CrossOrigin(origins = "*")
 @Tag(name = "Tarefas", description = "Endpoints para gerenciamento de tarefas do COMPETASK")
 public class TarefaController {
 

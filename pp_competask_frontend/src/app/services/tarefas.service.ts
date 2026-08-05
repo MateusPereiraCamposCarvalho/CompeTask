@@ -21,7 +21,8 @@ type AtualizarTarefaInput = NovaTarefaInput;
 })
 export class TarefasService {
 	private readonly storageKey = 'tarefas';
-	private readonly API_URL = 'http://localhost:8080/api/v1/tarefas';
+	// private readonly API_URL = 'http://localhost:8080/api/v1/tarefas';
+	private readonly API_URL = 'https://competask.onrender.com/api/v1/tarefas';
 
 	constructor(private http: HttpClient) { }
 

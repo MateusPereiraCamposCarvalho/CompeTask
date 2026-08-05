@@ -10,7 +10,11 @@ import { map } from 'rxjs/operators';
 })
 export class UsuarioService {
 
-  private readonly API_URL = 'http://localhost:8080/api/v1/usuarios';
+  // private readonly API_URL = 'http://localhost:8080/api/v1/usuarios';
+
+  
+  private readonly API_URL = 'https://competask.onrender.com/api/v1/usuarios';
+
 
   constructor(private http: HttpClient){ }
 

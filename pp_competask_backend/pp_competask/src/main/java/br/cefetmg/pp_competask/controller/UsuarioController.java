@@ -25,7 +25,8 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/usuarios")
-@CrossOrigin(origins = "http://localhost:8100")
+// @CrossOrigin(origins = "http://localhost:8100")
+@CrossOrigin(origins = "*")
 @Tag(name = "Usuários", description = "Endpoints para gerenciamento de usuários do COMPETASK")
 public class UsuarioController {
 

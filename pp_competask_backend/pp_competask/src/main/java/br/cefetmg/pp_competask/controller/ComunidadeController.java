@@ -25,7 +25,8 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/comunidades")
-@CrossOrigin(origins = "http://localhost:8100")
+// @CrossOrigin(origins = "http://localhost:8100")
+@CrossOrigin(origins = "*")
 @Tag(name = "Comunidades", description = "Endpoints para gerenciamento de comunidades do COMPETASK")
 public class ComunidadeController {
     
