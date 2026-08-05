@@ -2,15 +2,21 @@ spring:
   application:
     name: pp_bd_competask
 
+  # datasource:
+  #   url: ${DATASOURCE_URL:jdbc:mysql://localhost:3306/pp_bd_competask}
+  #   username: ${DATASOURCE_USER:root}
+  #   password: ${DATASOURCE_PWD:}
+  #   driver-class-name: ${DATASOURCE_DRIVER:com.mysql.cj.jdbc.Driver}
+
   datasource:
-    url: ${DATASOURCE_URL:jdbc:mysql://localhost:3306/pp_bd_competask}
-    username: ${DATASOURCE_USER:root}
+    url: ${DATASOURCE_URL:jdbc:postgresql://localhost:5432/pp_bd_competask}
+    username: ${DATASOURCE_USER:postgres}
     password: ${DATASOURCE_PWD:}
-    driver-class-name: ${DATASOURCE_DRIVER:com.mysql.cj.jdbc.Driver}
+    driver-class-name: ${DATASOURCE_DRIVER:org.postgresql.Driver}
 
   jpa:
     hibernate:
-      ddl-auto: create   # create, create-drop, validate, none, update
+      ddl-auto: update   # create, create-drop, validate, none, update
     show-sql: true
     properties:
       hibernate:
