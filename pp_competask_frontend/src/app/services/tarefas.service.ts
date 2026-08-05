@@ -126,6 +126,10 @@ export class TarefasService {
 		return this.http.put<TarefaModel>(`${this.API_URL}/${id}`, tarefa);
 	}
 
+	atualizarTempoExecucao(id: string, tempoExecucao: string): Observable<TarefaModel> {
+		return this.http.patch<TarefaModel>(`${this.API_URL}/timer/${id}`, { tempoExecucao });
+	}
+
 	alternarConclusao(tarefa: TarefaModel, usuarioId: string): Observable<TarefaModel> {
 		return this.http.patch<TarefaModel>(`${this.API_URL}/conclusao/${tarefa.id}`, {});
 	}
