@@ -205,27 +205,23 @@ export class TarefaPage {
       return;
     }
 
-    const tarefa = this.obterTarefaPorId(this.tarefaId, usuarioAtual.id);
-
-    if (!tarefa) {
-      this.mensagemAcao = 'Tarefa não encontrada.';
-      this.router.navigate(['/tarefas']);
-      return;
-    }
-
-    this.form.patchValue({
-      titulo: tarefa.titulo,
-      descricao: tarefa.descricao,
-      prioridade: String(tarefa.prioridade),
-      dataRealizacao: tarefa.dataRealizacao,
-      lembreteData: tarefa.lembreteData,
-      lembreteHora: tarefa.lembreteHora,
-      tempoExecucao: tarefa.tempoExecucao,
+    this.tarefasService.buscarPorId(this.tarefaId).subscribe({
+      next: (tarefa: TarefaModel) => {
+        this.form.patchValue({
+          titulo: tarefa.titulo,
+          descricao: tarefa.descricao,
+          prioridade: String(tarefa.prioridade),
+          dataRealizacao: tarefa.dataRealizacao,
+          lembreteData: tarefa.lembreteData,
+          lembreteHora: tarefa.lembreteHora,
+          tempoExecucao: tarefa.tempoExecucao,
+        });
+      },
+      error: () => {
+        this.mensagemAcao = 'Tarefa não encontrada.';
+        this.router.navigate(['/tarefas']);
+      },
     });
-  }
-
-  private obterTarefaPorId(id: string, usuarioId: string): TarefaModel | null {
-    return this.tarefasService.obterPorId(id, usuarioId);
   }
 
   private tratarErroSalvar(erro: HttpErrorResponse): void {

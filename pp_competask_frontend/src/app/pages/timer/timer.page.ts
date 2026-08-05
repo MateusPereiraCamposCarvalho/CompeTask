@@ -86,12 +86,12 @@ export class TimerPage implements OnDestroy {
   }
 
   get tempoExibidoCronometro(): string {
-    const centesimos = Math.floor(this.tempoDecorridoMs / 10) % 100;
     const totalSegundos = Math.floor(this.tempoDecorridoMs / 1000);
+    const horas = Math.floor(totalSegundos / 3600);
+    const minutos = Math.floor((totalSegundos % 3600) / 60);
     const segundos = totalSegundos % 60;
-    const minutos = Math.floor(totalSegundos / 60);
 
-    return `${String(minutos).padStart(2, '0')}:${String(segundos).padStart(2, '0')}.${String(centesimos).padStart(2, '0')}`;
+    return `${String(horas).padStart(2, '0')}:${String(minutos).padStart(2, '0')}:${String(segundos).padStart(2, '0')}`;
   }
 
   get mostrarAcoesPausa(): boolean {
@@ -172,7 +172,7 @@ export class TimerPage implements OnDestroy {
       return;
     }
 
-    const tarefaSelecionada = this.tarefas.find((tarefa) => tarefa.id === this.tarefaSelecionadaId);
+    const tarefaSelecionada = this.tarefas.find((tarefa) => String(tarefa.id) === this.tarefaSelecionadaId);
     if (!tarefaSelecionada) {
       this.mensagemModal = 'A tarefa selecionada nao foi encontrada.';
       return;
@@ -183,13 +183,7 @@ export class TimerPage implements OnDestroy {
       ? `${historicoAnterior}\n${this.registroPendente}`
       : this.registroPendente;
 
-    const payload: Partial<TarefaModel> = {
-      ...tarefaSelecionada,
-      usuarioId: Number(usuarioAtual.id) as unknown as string,
-      tempoExecucao: novoHistorico,
-    };
-
-    this.tarefasService.atualizar(tarefaSelecionada.id, payload).subscribe({
+    this.tarefasService.atualizarTempoExecucao(String(tarefaSelecionada.id), novoHistorico).subscribe({
       next: () => {
         this.mensagemAcao = `Registro salvo em ${tarefaSelecionada.titulo}.`;
         this.fecharModalSalvar();
