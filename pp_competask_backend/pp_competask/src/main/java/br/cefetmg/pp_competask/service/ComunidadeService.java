@@ -43,23 +43,23 @@ public class ComunidadeService {
     public List<ComunidadeResponseDTO> getAllByUsuario(Long idUsuario) {
         List<MembroComunidade> vinculos = membroComunidadeRepository.findByUsuarioIdUsuario(idUsuario);
         return vinculos.stream()
-            .map(MembroComunidade::getComunidade)
-            .map(ComunidadeResponseDTO::new)
-            .toList();
+                .map(MembroComunidade::getComunidade)
+                .map(ComunidadeResponseDTO::new)
+                .toList();
     }
 
     @Transactional
-    public ComunidadeResponseDTO inserir(ComunidadeRequestDTO dto){
-        //melhorar o retorno, ta so retornando null se nao achar, cade excessao
+    public ComunidadeResponseDTO inserir(ComunidadeRequestDTO dto) {
+        // melhorar o retorno, ta so retornando null se nao achar, cade excessao
         Usuario usuario = usuarioRepository.findById(dto.getIdUsuarioCriador()).orElse(null);
-        //cria a comunidade
+        // cria a comunidade
         Comunidade comunidade = new Comunidade();
         comunidade.setNome(dto.getNome());
         comunidade.setDescricao(dto.getDescricao());
         comunidade.setTipoAcesso(dto.getTipoAcesso());
         comunidade.setFoto(dto.getFoto());
         comunidade = comunidadeRepository.save(comunidade);
-        //vincula o usuario e a comunidade na tabela auxiliar
+        // vincula o usuario e a comunidade na tabela auxiliar
         MembroComunidade membroComunidade = new MembroComunidade();
         membroComunidade.setComunidade(comunidade);
         membroComunidade.setUsuario(usuario);
@@ -73,23 +73,51 @@ public class ComunidadeService {
     }
 
     @Transactional
-    public ComunidadeResponseDTO atualizar(Long id, ComunidadeRequestDTO dto){
-        //ver se existe com esse id
+    public ComunidadeResponseDTO atualizar(Long id, ComunidadeRequestDTO dto) {
+        // ver se existe com esse id
         Comunidade comunidade = comunidadeRepository.findById(id).orElse(null);
         comunidade.setNome(dto.getNome());
         comunidade.setDescricao(dto.getDescricao());
         comunidade.setFoto(dto.getFoto());
         comunidade.setTipoAcesso(dto.getTipoAcesso());
-        // comunidade.setMembros(null); 
-        //por enquanto nao vamos mexer na lista de membros e entrar em comunidade nem nada do tipo
+        // comunidade.setMembros(null);
+        // por enquanto nao vamos mexer na lista de membros e entrar em comunidade nem
+        // nada do tipo
 
         return new ComunidadeResponseDTO(comunidadeRepository.save(comunidade));
 
     }
 
     @Transactional
-    public void excluir(Long id){
-        //verificar se existe ai madna excluir
+    public void excluir(Long id) {
+        // verificar se existe ai madna excluir
         comunidadeRepository.deleteById(id);
+    }
+
+    @Transactional
+    public ComunidadeResponseDTO entrarNaComunidade(Long idComunidade, Long idUsuario) {
+        Comunidade comunidade = comunidadeRepository.findById(idComunidade)
+                .orElseThrow(() -> new IllegalArgumentException("Comunidade não encontrada."));
+
+        Usuario usuario = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado."));
+
+        boolean jaMembro = membroComunidadeRepository.existsByUsuarioIdUsuarioAndComunidadeIdComunidade(idUsuario,
+                idComunidade);
+        if (jaMembro) {
+            throw new IllegalArgumentException("Usuário já pertence a esta comunidade.");
+        }
+
+        MembroComunidade membro = new MembroComunidade();
+        membro.setUsuario(usuario);
+        membro.setComunidade(comunidade);
+        membro.setAdm(false);
+        membro.setPontuacao(0);
+
+        membroComunidadeRepository.save(membro);
+
+        comunidade.getMembros().add(membro);
+
+        return new ComunidadeResponseDTO(comunidade);
     }
 }

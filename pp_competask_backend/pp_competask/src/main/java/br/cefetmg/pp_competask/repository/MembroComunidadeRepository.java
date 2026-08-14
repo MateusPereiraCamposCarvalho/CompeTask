@@ -11,4 +11,6 @@ import br.cefetmg.pp_competask.model.MembroComunidade;
 public interface MembroComunidadeRepository extends JpaRepository<MembroComunidade, Long> {
 
     List<MembroComunidade> findByUsuarioIdUsuario(Long idUsuario);
+
+    boolean existsByUsuarioIdUsuarioAndComunidadeIdComunidade(Long usuarioId, Long comunidadeId);
 }

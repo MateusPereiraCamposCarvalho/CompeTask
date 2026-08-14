@@ -27,7 +27,7 @@ public class TarefaResponseDTO {
 
     public TarefaResponseDTO(Tarefa tarefa){
         this.id = tarefa.getIdTarefa();
-        this.usuarioId = tarefa.getUsuario().getIdUsuario();
+        this.usuarioId = tarefa.getUsuario() != null ? tarefa.getUsuario().getIdUsuario() : null;
         this.titulo = tarefa.getTitulo();
         this.descricao = tarefa.getDescricao();
         this.prioridade = tarefa.getPrioridade();
