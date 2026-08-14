@@ -10,9 +10,11 @@ import org.springframework.transaction.annotation.Transactional;
 import br.cefetmg.pp_competask.dto.TarefaRequestDTO;
 import br.cefetmg.pp_competask.dto.TarefaResponseDTO;
 import br.cefetmg.pp_competask.model.Comunidade;
+import br.cefetmg.pp_competask.model.MembroComunidade;
 import br.cefetmg.pp_competask.model.Tarefa;
 import br.cefetmg.pp_competask.model.Usuario;
 import br.cefetmg.pp_competask.repository.ComunidadeRepository;
+import br.cefetmg.pp_competask.repository.MembroComunidadeRepository;
 import br.cefetmg.pp_competask.repository.TarefaRepository;
 import br.cefetmg.pp_competask.repository.UsuarioRepository;
 
@@ -27,6 +29,9 @@ public class TarefaService {
 
     @Autowired
     private ComunidadeRepository comunidadeRepository;
+
+    @Autowired
+    private MembroComunidadeRepository membroComunidadeRepository;
 
     @Transactional(readOnly = true)
     public List<TarefaResponseDTO> buscarTarefasPorUsuarioId(Long id) {
@@ -135,6 +140,16 @@ public class TarefaService {
         Comunidade comunidade = comunidadeRepository.findById(dto.getComunidadeId())
                 .orElseThrow(() -> new IllegalArgumentException("Comunidade não encontrada"));
 
+        MembroComunidade membroComunidade = membroComunidadeRepository
+                .findByUsuarioIdUsuarioAndComunidadeIdComunidade(dto.getUsuarioId(), dto.getComunidadeId());
+
+        if (membroComunidade == null) {
+            throw new IllegalArgumentException("Usuário não pertence a esta comunidade.");
+        }
+
+        if (!membroComunidade.isAdm()) {
+            throw new IllegalArgumentException("Apenas administradores podem criar tarefas na comunidade.");
+        }
 
         Tarefa tarefa = new Tarefa();
         tarefa.setUsuario(usuario);
@@ -159,5 +174,5 @@ public class TarefaService {
         return tarefas.stream().map(TarefaResponseDTO::new).toList();
     }
 
-    //botar mais de um usuário na comunidade
+    // botar mais de um usuário na comunidade
 }
