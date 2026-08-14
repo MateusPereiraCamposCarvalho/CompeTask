@@ -96,7 +96,7 @@ public class ComunidadeController {
     // entrar em comunidades que o usuário não é dono
     @PostMapping("/entrar/{id}")
     @Operation(summary = "Entrar em comunidades públicas", description = "")
-    public ResponseEntity<ComunidadeResponseDTO> entrarNaComunidade(@PathVariable Long idComunidade,
+    public ResponseEntity<ComunidadeResponseDTO> entrarNaComunidade(@PathVariable Long id,
             @RequestBody Map<String, Long> body) {
 
         Long usuarioId = body.get("usuarioId");
