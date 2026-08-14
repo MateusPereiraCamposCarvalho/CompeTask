@@ -33,6 +33,10 @@ public class Tarefa {
     @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
 
+    @ManyToOne
+    @JoinColumn(name = "comunidade_id", nullable = true)
+    private Comunidade comunidade;
+
     @Column(length = 255, nullable = false)
     private String titulo;
 
@@ -59,5 +63,8 @@ public class Tarefa {
 
     @Column(length = 255, nullable = true)
     private String dataConfeccao;
+
+    @Column(nullable = false)
+    private boolean inComunidade;
 
 }

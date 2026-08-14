@@ -9,8 +9,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.cefetmg.pp_competask.dto.TarefaRequestDTO;
 import br.cefetmg.pp_competask.dto.TarefaResponseDTO;
+import br.cefetmg.pp_competask.model.Comunidade;
 import br.cefetmg.pp_competask.model.Tarefa;
 import br.cefetmg.pp_competask.model.Usuario;
+import br.cefetmg.pp_competask.repository.ComunidadeRepository;
 import br.cefetmg.pp_competask.repository.TarefaRepository;
 import br.cefetmg.pp_competask.repository.UsuarioRepository;
 
@@ -23,9 +25,12 @@ public class TarefaService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    @Autowired
+    private ComunidadeRepository comunidadeRepository;
+
     @Transactional(readOnly = true)
     public List<TarefaResponseDTO> buscarTarefasPorUsuarioId(Long id) {
-        List<Tarefa> tarefas = tarefaRepository.findAllByUsuarioIdUsuario(id);
+        List<Tarefa> tarefas = tarefaRepository.findAllByUsuarioIdUsuarioAndInComunidadeFalse(id);
         return tarefas.stream().map(TarefaResponseDTO::new).toList();
     }
 
@@ -120,5 +125,37 @@ public class TarefaService {
         tarefa.setTempoExecucao(tempoExecucao);
 
         return new TarefaResponseDTO(tarefaRepository.save(tarefa));
+    }
+
+    @Transactional
+    public TarefaResponseDTO inserirNaComunidade(TarefaRequestDTO dto) {
+        Usuario usuario = usuarioRepository.findById(dto.getUsuarioId())
+                .orElseThrow(() -> new IllegalArgumentException("Usuario nao encontrado. Faca login novamente."));
+
+        Comunidade comunidade = comunidadeRepository.findById(dto.getComunidadeId())
+                .orElseThrow(() -> new IllegalArgumentException("Usuario nao encontrado. Faca login novamente."));
+
+
+        Tarefa tarefa = new Tarefa();
+        tarefa.setUsuario(usuario);
+        tarefa.setTitulo(dto.getTitulo());
+        tarefa.setDescricao(dto.getDescricao());
+        tarefa.setPrioridade(dto.getPrioridade());
+        tarefa.setDataRealizacao(dto.getDataRealizacao());
+        tarefa.setLembreteData(dto.getLembreteData());
+        tarefa.setLembreteHora(dto.getLembreteHora());
+        tarefa.setTempoExecucao(dto.getTempoExecucao());
+        tarefa.setConcluida(false);
+        tarefa.setDataConfeccao(null);
+        tarefa.setInComunidade(true);
+        tarefa.setComunidade(comunidade);
+
+        return new TarefaResponseDTO(tarefaRepository.save(tarefa));
+    }
+
+    @Transactional(readOnly = true)
+    public List<TarefaResponseDTO> buscarTarefasPorComunidadeId(Long id) {
+        List<Tarefa> tarefas = tarefaRepository.findAllByComunidadeIdComunidade(id);
+        return tarefas.stream().map(TarefaResponseDTO::new).toList();
     }
 }

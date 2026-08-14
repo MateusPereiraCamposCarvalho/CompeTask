@@ -34,4 +34,7 @@ public class TarefaRequestDTO {
 
     private String dataConfeccao;
 
+    private Long comunidadeId;
+
+    private Boolean inComunidade;
 }

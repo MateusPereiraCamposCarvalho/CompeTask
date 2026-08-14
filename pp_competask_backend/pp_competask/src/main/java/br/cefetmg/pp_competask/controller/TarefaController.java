@@ -68,7 +68,8 @@ public class TarefaController {
     // editar tarefa
     @PutMapping("/{id}")
     @Operation(summary = "Editar tarefa", description = "")
-    public ResponseEntity<TarefaResponseDTO> atualizar(@PathVariable Long id, @RequestBody TarefaRequestDTO tarefaRequestDTO) {
+    public ResponseEntity<TarefaResponseDTO> atualizar(@PathVariable Long id,
+            @RequestBody TarefaRequestDTO tarefaRequestDTO) {
         try {
             TarefaResponseDTO tarefaResponseDTO = tarefaService.atualizar(id, tarefaRequestDTO);
             return ResponseEntity.ok(tarefaResponseDTO);
@@ -89,21 +90,31 @@ public class TarefaController {
         }
     }
 
-    //alterar estado de concluída da tarefa
+    // alterar estado de concluída da tarefa
     @PatchMapping("/conclusao/{id}")
     @Operation(summary = "Editar tarefa")
-    public ResponseEntity<TarefaResponseDTO> alterarConclusao(@PathVariable Long id){
+    public ResponseEntity<TarefaResponseDTO> alterarConclusao(@PathVariable Long id) {
         TarefaResponseDTO tarefaResponseDTO = tarefaService.alterarConclusao(id);
         return ResponseEntity.ok(tarefaResponseDTO);
     }
 
-
-    //adicionar e alterar o tempo de conclusão de uma tarefa 
+    // adicionar e alterar o tempo de conclusão de uma tarefa
     @PatchMapping("/timer/{id}")
     @Operation(summary = "Adicionar e editar tempo de conclsuão de uma tarefa")
-    public ResponseEntity<TarefaResponseDTO> timerTarefa(@PathVariable Long id, @Valid @RequestBody TarefaTempoExecucaoPatchDTO tempoExecucao){
+    public ResponseEntity<TarefaResponseDTO> timerTarefa(@PathVariable Long id,
+            @Valid @RequestBody TarefaTempoExecucaoPatchDTO tempoExecucao) {
         TarefaResponseDTO tarefaResponseDTO = tarefaService.timerTarefa(id, tempoExecucao.getTempoExecucao());
         return ResponseEntity.ok(tarefaResponseDTO);
     }
 
+    @PostMapping("/comunidade")
+    @Operation(summary = "Criar uma tarefa na comunidade")
+    public ResponseEntity<TarefaResponseDTO> inserirNaComunidade(@Valid @RequestBody TarefaRequestDTO tarefaRequestDTO) {
+        try {
+            TarefaResponseDTO tarefaResponseDTO = tarefaService.inserirNaComunidade(tarefaRequestDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body(tarefaResponseDTO);
+        } catch (IllegalArgumentException ex) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
+        }
+    }
 }

@@ -21,6 +21,8 @@ public class TarefaResponseDTO {
     private String tempoExecucao;
     private boolean concluida;
     private String dataConfeccao;
+    private Long comunidadeId;
+    private boolean inComunidade;
     // private String atualizadaEm;
 
     public TarefaResponseDTO(Tarefa tarefa){
@@ -35,5 +37,7 @@ public class TarefaResponseDTO {
         this.tempoExecucao = tarefa.getTempoExecucao();
         this.concluida = tarefa.isConcluida();
         this.dataConfeccao = tarefa.getDataConfeccao();
+        this.comunidadeId = tarefa.getComunidade().getIdComunidade();
+        this.inComunidade = tarefa.isInComunidade();
     }
 }

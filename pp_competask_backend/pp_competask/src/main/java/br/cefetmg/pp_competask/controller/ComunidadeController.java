@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.cefetmg.pp_competask.dto.ComunidadeRequestDTO;
 import br.cefetmg.pp_competask.dto.ComunidadeResponseDTO;
+import br.cefetmg.pp_competask.dto.TarefaResponseDTO;
 import br.cefetmg.pp_competask.service.ComunidadeService;
+import br.cefetmg.pp_competask.service.TarefaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -32,6 +34,9 @@ public class ComunidadeController {
     
     @Autowired
     private ComunidadeService comunidadeService;
+
+    @Autowired 
+    private TarefaService tarefaService;
 
     //listar todas as comunidades
     @GetMapping("")
@@ -95,4 +100,13 @@ public class ComunidadeController {
         comunidadeService.excluir(id);
         return ResponseEntity.noContent().build();
     }
+
+
+    // listar todas as tarefas por id da comunidade
+    @GetMapping("/tarefas/{id}")
+    @Operation(summary = "Buscar tarefas da comunidade por ID", description = "")
+    public List<TarefaResponseDTO> getAllByComunidadeId(@PathVariable Long id) {
+        return tarefaService.buscarTarefasPorComunidadeId(id);
+    }
+
 }

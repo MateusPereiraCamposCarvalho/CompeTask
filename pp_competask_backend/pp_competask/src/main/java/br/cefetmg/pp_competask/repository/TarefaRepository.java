@@ -11,4 +11,8 @@ import br.cefetmg.pp_competask.model.Tarefa;
 public interface TarefaRepository extends JpaRepository<Tarefa, Long> {
 
     List<Tarefa> findAllByUsuarioIdUsuario(Long id);
+
+    List<Tarefa> findAllByUsuarioIdUsuarioAndInComunidadeFalse(Long id);
+
+    List<Tarefa> findAllByComunidadeIdComunidade(Long id);
 } 
