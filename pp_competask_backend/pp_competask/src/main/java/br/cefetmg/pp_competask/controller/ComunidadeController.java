@@ -105,7 +105,7 @@ public class ComunidadeController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "usuarioId é obrigatório");
         }
 
-        ComunidadeResponseDTO comunidade = comunidadeService.entrarNaComunidade(idComunidade, usuarioId);
+        ComunidadeResponseDTO comunidade = comunidadeService.entrarNaComunidade(id, usuarioId);
         return ResponseEntity.status(HttpStatus.CREATED).body(comunidade);
     }
 
