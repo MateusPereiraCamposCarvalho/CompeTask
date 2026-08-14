@@ -133,7 +133,7 @@ public class TarefaService {
                 .orElseThrow(() -> new IllegalArgumentException("Usuario nao encontrado. Faca login novamente."));
 
         Comunidade comunidade = comunidadeRepository.findById(dto.getComunidadeId())
-                .orElseThrow(() -> new IllegalArgumentException("Usuario nao encontrado. Faca login novamente."));
+                .orElseThrow(() -> new IllegalArgumentException("Comunidade não encontrada"));
 
 
         Tarefa tarefa = new Tarefa();
@@ -158,4 +158,6 @@ public class TarefaService {
         List<Tarefa> tarefas = tarefaRepository.findAllByComunidadeIdComunidade(id);
         return tarefas.stream().map(TarefaResponseDTO::new).toList();
     }
+
+    //botar mais de um usuário na comunidade
 }

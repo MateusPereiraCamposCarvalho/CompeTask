@@ -107,6 +107,7 @@ public class TarefaController {
         return ResponseEntity.ok(tarefaResponseDTO);
     }
 
+    // criar uma tarefa na comunidade 
     @PostMapping("/comunidade")
     @Operation(summary = "Criar uma tarefa na comunidade")
     public ResponseEntity<TarefaResponseDTO> inserirNaComunidade(@Valid @RequestBody TarefaRequestDTO tarefaRequestDTO) {

@@ -37,7 +37,7 @@ public class TarefaResponseDTO {
         this.tempoExecucao = tarefa.getTempoExecucao();
         this.concluida = tarefa.isConcluida();
         this.dataConfeccao = tarefa.getDataConfeccao();
-        this.comunidadeId = tarefa.getComunidade().getIdComunidade();
+        this.comunidadeId = tarefa.getComunidade() != null ? tarefa.getComunidade().getIdComunidade() : null;
         this.inComunidade = tarefa.isInComunidade();
     }
 }
